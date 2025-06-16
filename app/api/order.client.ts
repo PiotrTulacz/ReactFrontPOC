@@ -74,10 +74,15 @@ export async function setOrderAddressEmailAndAddressesAPIClient(params: {
 }) {
     const { token, email, billingAddress, shippingAddress } = params;
     const API_URL = window?.ENV?.API_URL || "";
+    const jwtToken =
+        typeof window !== "undefined" ? localStorage.getItem("jwtToken") : null;
 
     const res = await fetch(`${API_URL}/api/v2/shop/orders/${token}/address`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/merge-patch+json" },
+        headers: {
+            "Content-Type": "application/merge-patch+json",
+            ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
+        },
         body: JSON.stringify({
             email,
             billingAddress,
